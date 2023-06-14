@@ -57,7 +57,7 @@ To set up the project, follow these steps:
 4. Clone the repository:
 
    ```shell
-      git clone https://github.c](https://github.com/grisuno/anasniffdeep.git
+      git clone https://github.com/grisuno/anasniffdeep.git
       cd AnaSniffDeep
    
 5. Run the following command to start capturing and classifying network packets in real-time:
