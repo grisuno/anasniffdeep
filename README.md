@@ -16,7 +16,7 @@ To set up the project, follow these steps:
    git clone [https://github.com/grisuno/AnaSniffDeep.git](https://github.com/grisuno/anasniffdeep.git)
    cd AnaSniffDeep
    
-Code Structure
+3. Code Structure
 The code is organized into the following classes and functions:
 
 Anasniffdeep: This class encapsulates the packet capture, feature extraction, classification, and database storage functionalities. It contains the following methods:
@@ -51,39 +51,39 @@ The code has been tested extensively to ensure proper packet capture, feature ex
 Usage
 Ensure that the required dependencies are installed by running:
 
-```shell
-   pip install scapy pandas numpy tensorflow scikit-learn
+   ```shell
+      pip install scapy pandas numpy tensorflow scikit-learn
    
-Clone the repository:
+4. Clone the repository:
 
-```shell
-   git clone https://github.c](https://github.com/grisuno/anasniffdeep.git
-   cd AnaSniffDeep
+   ```shell
+      git clone https://github.c](https://github.com/grisuno/anasniffdeep.git
+      cd AnaSniffDeep
    
-Run the following command to start capturing and classifying network packets in real-time:
+5. Run the following command to start capturing and classifying network packets in real-time:
 
-```shell
-   python main.py
+   ```shell
+      python main.py
    
    
-The program will display the predicted label for each captured packet and store positive packets in the positive packets directory.
+6. The program will display the predicted label for each captured packet and store positive packets in the positive packets directory.
 
-Press Ctrl+C to stop the packet capture process.
+   Press Ctrl+C to stop the packet capture process.
 
-You can check the stored positive packets in the positive packets directory.
+   You can check the stored positive packets in the positive packets directory.
 
-File Structure
-The project contains the following files:
+7. File Structure
+   The project contains the following files:
 
-main.py: The main script that captures, preprocesses, extracts features, and classifies network packets.
-positive_packets/: Directory to store positive packets.
-README.md: This README file.
-License
-This project is licensed under the MIT License. Feel free to use, modify, and distribute this code for educational and personal projects.
+   main.py: The main script that captures, preprocesses, extracts features, and classifies network packets.
+   positive_packets/: Directory to store positive packets.
+   README.md: This README file.
+   License
+   This project is licensed under the MIT License. Feel free to use, modify, and distribute this code for educational and personal projects.
 
-Acknowledgments
+# Acknowledgments
 The project uses the Scapy library (https://scapy.net/) for network packet manipulation. It also utilizes the TensorFlow-Keras library (https://www.tensorflow.org/guide/keras) for training and deploying the classification model.
 
-If you have any questions or feedback, please feel free to contact me.
+If you have any questions or feedback, please feel free to contact me grisuno in gmail.
 
 Please note that the README assumes the name of the main script is main.py and the positive packets directory is named positive_packets/. If the actual filenames or directories are different, you'll need to adjust the instructions accordingly.
