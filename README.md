@@ -1,26 +1,18 @@
-# anasniffdeep
-deep learning 
-Network Packet Capture and Classification
+#AnaSniffDeep
+AnaSniffDeep is a deep learning project that captures network packets, extracts features from them, and classifies them as either positive or negative based on certain characteristics.
 
-This project captures network packets, extracts features from them, and classifies them as either positive or negative based on certain characteristics.
+Setup
+To set up the project, follow these steps:
 
-## Setup
+Install the required dependencies:
 
-1. Install the required dependencies:
 
-   ```shell
-   pip install scapy pandas numpy tensorflow scikit-learn
+pip install scapy pandas numpy tensorflow scikit-learn
 Clone the repository:
 
-shell
-Copy code
-git clone https://github.com/username/repo.git
-cd repo
-Run the code:
 
-shell
-Copy code
-python main.py
+git clone https://github.com/grisuno/AnaSniffDeep.git
+cd AnaSniffDeep
 Code Structure
 The code is organized into the following classes and functions:
 
@@ -38,79 +30,54 @@ evaluate_model: Evaluates the trained model on validation data.
 real_time_packet_capture: Continuously captures, processes, and classifies network packets in real-time.
 run: The main entry point of the program. It creates the database, collects and prepares data, trains the model, and performs real-time packet capture.
 Improvements Made
-Refactored code to improve readability, maintainability, and adherence to coding best practices.
+The following improvements have been made to the code:
+
+Refactored the code to improve readability, maintainability, and adherence to coding best practices.
 Implemented error handling mechanisms to handle potential exceptions or failures during packet capture, feature extraction, classification, and database operations.
 Modularized the code to promote code reuse and separation of concerns. Encapsulated functionality into methods and classes.
 Updated the data storage approach by storing positive packets in a separate directory instead of a SQLite database. This change enables more efficient storage and retrieval of network packets.
-Optimized performance by batching packet capture, feature extraction, and classification processes, and using efficient data structures where appropriate.
+Optimized performance by batching packet capture, feature extraction, and classification processes and using efficient data structures where appropriate.
 Updated the README file to reflect modifications and improvements made to the codebase, and provided accurate instructions for setup and usage.
 Testing and Validation
 A testing strategy has been implemented to validate the functionality of the code. The following test cases were designed and executed:
 
 Positive Test: Capture and classify packets with known positive labels, ensuring correct classification and storage in the positive packets directory.
 Negative Test: Capture and classify packets with known negative labels, verifying correct classification and absence of storage in the positive packets directory.
-Error Handling Test: Simulate various error scenarios, such as missing dependencies, file permissions issues, and network errors, to ensure appropriate error handling and graceful termination of the program.
+Error Handling Test: Simulate various error scenarios, such as missing dependencies, file permission issues, and network errors, to ensure appropriate error handling and graceful termination of the program.
 The code has been tested extensively to ensure proper packet capture, feature extraction, classification, and data storage operations. Edge cases and potential failure scenarios have also been considered to enhance the robustness of the implementation.
 
-This project captures network packets, extracts features from them, and classifies them as either positive or negative based on the presence of certain characteristics. It uses the Scapy library for packet capture and manipulation, SQLite for data storage, and TensorFlow-Keras for training and deploying the classification model.
+Usage
+Ensure that the required dependencies are installed by running:
 
-## Prerequisites
 
-Before running the code, make sure you have the following prerequisites installed:
+pip install scapy pandas numpy tensorflow scikit-learn
+Clone the repository:
 
-- Python 3.x
-- Scapy library
-- SQLite3
-- pandas
-- numpy
-- scikit-learn
-- TensorFlow-Keras
 
-You can install the required Python libraries using pip:
+git clone https://github.com/grisuno/AnaSniffDeep.git
+cd AnaSniffDeep
+Run the following command to start capturing and classifying network packets in real-time:
 
-pip install scapy sqlite3 pandas numpy scikit-learn tensorflow
-
-bash
-Copy code
-
-## Usage
-
-1. Clone the repository or download the source code files.
-
-2. Open a terminal or command prompt and navigate to the project directory.
-
-3. Run the following command to capture and classify network packets:
 
 python packet_capture.py
+The program will display the predicted label for each captured packet and store positive packets in the positive packets directory.
 
-markdown
-Copy code
+Press Ctrl+C to stop the packet capture process.
 
-The program will start capturing network packets and classifying them in real-time. It will display the predicted label for each captured packet and store positive packets in the SQLite database.
+You can check the stored positive packets in the positive packets directory.
 
-4. Press `Ctrl+C` to stop the packet capture process.
-
-5. You can check the stored positive packets in the `data.db` SQLite database.
-
-## File Structure
-
+File Structure
 The project contains the following files:
 
-- `packet_capture.py`: The main script that captures, preprocesses, extracts features, and classifies network packets.
-- `data.db`: SQLite database file to store positive packets.
-- `README.md`: This README file.
+packet_capture.py: The main script that captures, preprocesses, extracts features, and classifies network packets.
+positive_packets/: Directory to store positive packets.
+README.md: This README file.
+License
+This project is licensed under the MIT License. Feel free to use, modify, and distribute this code for educational and personal projects.
 
-## License
-
-This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
-
-Feel free to use, modify, and distribute this code for educational and personal projects.
-
-## Acknowledgments
-
-- The project uses the Scapy library (https://scapy.net/) for network packet manipulation.
-- It also utilizes the TensorFlow-Keras library (https://www.tensorflow.org/guide/keras) for training and deploying the classification model.
+Acknowledgments
+The project uses the Scapy library (https://scapy.net/) for network packet manipulation. It also utilizes the TensorFlow-Keras library (https://www.tensorflow.org/guide/keras) for training and deploying the classification model.
 
 If you have any questions or feedback, please feel free to contact me.
 
-Please note that the README assumes the name of the main script is packet_capture.py and the database file is data.db. If the actual filenames are different, you'll need to adjust the instructions accordingly.
+Please note that the README assumes the name of the main script is packet_capture.py and the positive packets directory is named positive_packets/. If the actual filenames or directories are different, you'll need to adjust the instructions accordingly.
