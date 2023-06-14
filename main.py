@@ -1,8 +1,7 @@
-import re
+import socket
 import sqlite3
 import pandas as pd
 import numpy as np
-import socket
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MultiLabelBinarizer
 from scapy.all import sniff, RadioTap, Raw
@@ -52,16 +51,66 @@ def extract_features(packet):
 
     return features
 
-conn = sqlite3.connect('data.db')
-cursor = conn.cursor()
-cursor.execute('''CREATE TABLE IF NOT EXISTS positive_data (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    packet_data BLOB)''')
-conn.close()
+def create_database():
+    conn = sqlite3.connect('data.db')
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS positive_data (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        packet_data BLOB)''')
+    conn.close()
 
-print("Base de datos creada exitosamente.")
+def store_positive_packet(packet):
+    try:
+        conn = sqlite3.connect('data.db')
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO positive_data (packet_data) VALUES (?)", (str(packet),))
+        conn.commit()
+        conn.close()
+        print("Positive data saved in the database.")
+    except Exception as e:
+        print(f'An error occurred while storing positive packet: {e}')
 
-# Recopilación y preparación de datos
+def train_model(X_train, y_train, X_val, y_val):
+    num_features = X_train.shape[1]
+    model = Sequential()
+    model.add(Dense(64, activation='relu', input_dim=num_features))
+    model.compile(optimizer='adam', loss=BinaryCrossentropy(), metrics=['accuracy'])
+    history = model.fit(X_train.values, y_train, epochs=10, batch_size=32, validation_data=(X_val.values, y_val))
+    return model, history
+
+def evaluate_model(model, X_val, y_val):
+    loss, accuracy = model.evaluate(X_val.values, y_val)
+    print(f'Loss: {loss}, Accuracy: {accuracy}')
+
+def real_time_packet_capture(model):
+    while True:
+        captured_packet = capture_packet()
+
+        if captured_packet:
+            try:
+                preprocessed_packet = preprocess_packet(captured_packet)
+                packet_features = extract_features(preprocessed_packet)
+
+                if packet_features:
+                    packet_data = pd.DataFrame([packet_features], columns=X_encoded.columns)
+                    predicted_label = model.predict(packet_data.values)
+                    print(f'Predicted label: {predicted_label}')
+
+                    if predicted_label[0][0] >= 0.5:
+                        store_positive_packet(captured_packet)
+                else:
+                    print('Could not extract features from the packet.')
+            except Exception as e:
+                print(f'An error occurred while processing packets: {e}')
+        else:
+            print('No packet captured.')
+            break
+
+# Create the database if it doesn't exist
+create_database()
+print("Database created successfully.")
+
+# Collect and prepare data
 packets = sniff(filter="ip and tcp", count=100)
 data = []
 
@@ -86,9 +135,9 @@ for packet in packets:
     features = src_ip_octets + dst_ip_octets + [src_port, dst_port, protocol]
     data.append((features, label))
 
-print("Datos recopilados y preparados correctamente.")
+print("Data collected and prepared successfully.")
 
-# Preparación de los datos para el aprendizaje
+# Prepare data for learning
 data = pd.DataFrame(data, columns=['features', 'label'])
 X = data['features']
 y = data['label']
@@ -103,47 +152,12 @@ X_encoded = pd.DataFrame(mlb.fit_transform(X_encoded), columns=mlb.classes_, ind
 
 X_train, X_val, y_train, y_val = train_test_split(X_encoded, y, test_size=0.2, random_state=42)
 
-num_features = X_train.shape[1]
-model = Sequential()
-model.add(Dense(64, activation='relu', input_dim=num_features))
-
-model.compile(optimizer='adam', loss=BinaryCrossentropy(), metrics=['accuracy'])
-history = model.fit(X_train.values, y_train, epochs=10, batch_size=32, validation_data=(X_val.values, y_val))
-loss, accuracy = model.evaluate(X_val.values, y_val)
-print(f'Loss: {loss}, Accuracy: {accuracy}')
+# Train the model
+model, history = train_model(X_train, y_train, X_val, y_val)
+evaluate_model(model, X_val, y_val)
 
 model.summary()
+print("Model trained successfully.")
 
-print("Modelo entrenado correctamente.")
-
-loss, accuracy = model.evaluate(X_val, y_val)
-print(f'Loss: {loss}, Accuracy: {accuracy}')
-
-# Captura y clasificación de paquetes en tiempo real
-while True:
-    captured_packet = capture_packet()
-
-    if captured_packet:
-        try:
-            preprocessed_packet = preprocess_packet(captured_packet)
-            packet_features = extract_features(preprocessed_packet)
-
-            if packet_features:
-                packet_data = pd.DataFrame([packet_features], columns=X_encoded.columns)
-                predicted_label = model.predict(packet_data.values)
-                print(f'Predicted label: {predicted_label}')
-
-                if predicted_label[0][0] >= 0.5:
-                    conn = sqlite3.connect('data.db')
-                    cursor = conn.cursor()
-                    cursor.execute("INSERT INTO positive_data (packet_data) VALUES (?)", (str(captured_packet),))
-                    conn.commit()
-                    conn.close()
-                    print("Datos positivos guardados en la base de datos.")
-            else:
-                print('No se pudieron extraer características del paquete.')
-        except Exception as e:
-            print(f'An error occurred while processing packets: {e}')
-    else:
-        print('No se capturó ningún paquete.')
-        break
+# Real-time packet capture and classification
+real_time_packet_capture(model)
