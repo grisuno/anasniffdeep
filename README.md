@@ -1,14 +1,16 @@
-#AnaSniffDeep
+# AnaSniffDeep
+
 AnaSniffDeep is a deep learning project that captures network packets, extracts features from them, and classifies them as either positive or negative based on certain characteristics.
 
-Setup
+## Setup
+
 To set up the project, follow these steps:
 
-Install the required dependencies:
+1. Install the required dependencies:
 
-
-pip install scapy pandas numpy tensorflow scikit-learn
-Clone the repository:
+   ```shell
+   pip install scapy pandas numpy tensorflow scikit-learn
+2. Clone the repository:
 
 
 git clone https://github.com/grisuno/AnaSniffDeep.git
@@ -17,7 +19,6 @@ Code Structure
 The code is organized into the following classes and functions:
 
 Anasniffdeep: This class encapsulates the packet capture, feature extraction, classification, and database storage functionalities. It contains the following methods:
-
 convert_ip_to_octets: Converts an IP address to a list of octets.
 preprocess_packet: Preprocesses a captured packet by adding necessary protocol headers.
 capture_packet: Captures a network packet using Scapy's sniff function.
@@ -57,7 +58,6 @@ Clone the repository:
 git clone https://github.com/grisuno/AnaSniffDeep.git
 cd AnaSniffDeep
 Run the following command to start capturing and classifying network packets in real-time:
-
 
 python packet_capture.py
 The program will display the predicted label for each captured packet and store positive packets in the positive packets directory.
