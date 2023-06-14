@@ -2,6 +2,7 @@ import re
 import sqlite3
 import pandas as pd
 import numpy as np
+import socket
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MultiLabelBinarizer
 from scapy.all import sniff, RadioTap, Raw
@@ -10,10 +11,10 @@ from scapy.layers.inet import IP, TCP
 from scapy.layers.l2 import Ether
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
+from tensorflow.keras.losses import BinaryCrossentropy
 
 def convert_ip_to_octets(ip):
-    octets = re.findall(r'\d+', ip)
-    return [int(octet) for octet in octets]
+    return list(map(int, socket.inet_aton(ip)))
 
 def preprocess_packet(packet):
     dot11 = RadioTap() / Dot11() / Raw(packet)
@@ -21,20 +22,25 @@ def preprocess_packet(packet):
     return ethernet
 
 def capture_packet():
-    packet = sniff(count=1)
-    if packet:
-        return packet[0]
-    else:
+    try:
+        packet = sniff(count=1)
+        if packet:
+            return packet[0]
+        else:
+            return None
+    except Exception as e:
+        print(f'An error occurred while capturing packets: {e}')
         return None
 
 def extract_features(packet):
     features = []
     packet.show()
-    if packet.haslayer(IP):
-        source_ip = packet[IP].src
-        destination_ip = packet[IP].dst
+    ip_layer = packet.getlayer(IP)
+    if ip_layer:
+        source_ip = ip_layer.src
+        destination_ip = ip_layer.dst
         packet_length = len(packet)
-        packet_protocol = packet.sprintf("%IP.proto%")
+        packet_protocol = ip_layer.proto
 
         source_ip_octets = convert_ip_to_octets(source_ip)
         destination_ip_octets = convert_ip_to_octets(destination_ip)
@@ -101,8 +107,10 @@ num_features = X_train.shape[1]
 model = Sequential()
 model.add(Dense(64, activation='relu', input_dim=num_features))
 
-model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-model.fit(X_train.values, y_train, epochs=10, batch_size=32, validation_data=(X_val.values, y_val))
+model.compile(optimizer='adam', loss=BinaryCrossentropy(), metrics=['accuracy'])
+history = model.fit(X_train.values, y_train, epochs=10, batch_size=32, validation_data=(X_val.values, y_val))
+loss, accuracy = model.evaluate(X_val.values, y_val)
+print(f'Loss: {loss}, Accuracy: {accuracy}')
 
 model.summary()
 
@@ -116,23 +124,26 @@ while True:
     captured_packet = capture_packet()
 
     if captured_packet:
-        preprocessed_packet = preprocess_packet(captured_packet)
-        packet_features = extract_features(preprocessed_packet)
+        try:
+            preprocessed_packet = preprocess_packet(captured_packet)
+            packet_features = extract_features(preprocessed_packet)
 
-        if packet_features:
-            packet_data = pd.DataFrame([packet_features], columns=X_encoded.columns)
-            predicted_label = model.predict(packet_data.values)
-            print(f'Predicted label: {predicted_label}')
+            if packet_features:
+                packet_data = pd.DataFrame([packet_features], columns=X_encoded.columns)
+                predicted_label = model.predict(packet_data.values)
+                print(f'Predicted label: {predicted_label}')
 
-            if predicted_label[0][0] >= 0.5:
-                conn = sqlite3.connect('data.db')
-                cursor = conn.cursor()
-                cursor.execute("INSERT INTO positive_data (packet_data) VALUES (?)", (str(captured_packet),))
-                conn.commit()
-                conn.close()
-                print("Datos positivos guardados en la base de datos.")
-            
-            # ...
-        else:
-            print('No se pudieron extraer características del paquete.')
-            break
+                if predicted_label[0][0] >= 0.5:
+                    conn = sqlite3.connect('data.db')
+                    cursor = conn.cursor()
+                    cursor.execute("INSERT INTO positive_data (packet_data) VALUES (?)", (str(captured_packet),))
+                    conn.commit()
+                    conn.close()
+                    print("Datos positivos guardados en la base de datos.")
+            else:
+                print('No se pudieron extraer características del paquete.')
+        except Exception as e:
+            print(f'An error occurred while processing packets: {e}')
+    else:
+        print('No se capturó ningún paquete.')
+        break
