@@ -13,7 +13,7 @@ To set up the project, follow these steps:
 2. Clone the repository:
 
 
-git clone https://github.com/grisuno/AnaSniffDeep.git
+git clone [https://github.com/grisuno/AnaSniffDeep.git](https://github.com/grisuno/anasniffdeep.git)
 cd AnaSniffDeep
 Code Structure
 The code is organized into the following classes and functions:
@@ -55,7 +55,7 @@ pip install scapy pandas numpy tensorflow scikit-learn
 Clone the repository:
 
 
-git clone https://github.com/grisuno/AnaSniffDeep.git
+git clone https://github.c](https://github.com/grisuno/anasniffdeep.git
 cd AnaSniffDeep
 Run the following command to start capturing and classifying network packets in real-time:
 
