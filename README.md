@@ -59,7 +59,7 @@ git clone https://github.com/grisuno/AnaSniffDeep.git
 cd AnaSniffDeep
 Run the following command to start capturing and classifying network packets in real-time:
 
-python packet_capture.py
+python main.py
 The program will display the predicted label for each captured packet and store positive packets in the positive packets directory.
 
 Press Ctrl+C to stop the packet capture process.
@@ -69,7 +69,7 @@ You can check the stored positive packets in the positive packets directory.
 File Structure
 The project contains the following files:
 
-packet_capture.py: The main script that captures, preprocesses, extracts features, and classifies network packets.
+main.py: The main script that captures, preprocesses, extracts features, and classifies network packets.
 positive_packets/: Directory to store positive packets.
 README.md: This README file.
 License
@@ -80,4 +80,4 @@ The project uses the Scapy library (https://scapy.net/) for network packet manip
 
 If you have any questions or feedback, please feel free to contact me.
 
-Please note that the README assumes the name of the main script is packet_capture.py and the positive packets directory is named positive_packets/. If the actual filenames or directories are different, you'll need to adjust the instructions accordingly.
+Please note that the README assumes the name of the main script is main.py and the positive packets directory is named positive_packets/. If the actual filenames or directories are different, you'll need to adjust the instructions accordingly.
