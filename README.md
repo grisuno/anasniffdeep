@@ -50,16 +50,16 @@ The code has been tested extensively to ensure proper packet capture, feature ex
 Usage
 Ensure that the required dependencies are installed by running:
 
-
-pip install scapy pandas numpy tensorflow scikit-learn
+```shell
+   pip install scapy pandas numpy tensorflow scikit-learn
 Clone the repository:
 
-
-git clone https://github.c](https://github.com/grisuno/anasniffdeep.git
+```shell
+   git clone https://github.c](https://github.com/grisuno/anasniffdeep.git
 cd AnaSniffDeep
 Run the following command to start capturing and classifying network packets in real-time:
-
-python main.py
+```shell
+   python main.py
 The program will display the predicted label for each captured packet and store positive packets in the positive packets directory.
 
 Press Ctrl+C to stop the packet capture process.
